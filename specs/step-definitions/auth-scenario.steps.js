@@ -12,8 +12,8 @@ defineFeature(feature, (test) => {
   let email;
   let password;
   let response;
-  let first_name = "doctor";
-  let last_name = "jones";
+  let first_name;
+  let last_name;
   let newUserID;
 
   test("Creating a new user account on BudgetBlocks API", ({
@@ -25,9 +25,14 @@ defineFeature(feature, (test) => {
     given(/^My email is (.*)$/, (arg0) => {
       email = arg0;
     });
-
     and(/^My password is (.*)$/, (arg0) => {
       password = arg0;
+    });
+    and(/^My firstname is (.*)$/, (arg0) => {
+      first_name = arg0;
+    });
+    and(/^My lastname is (.*)$/, (arg0) => {
+      last_name = arg0;
     });
 
     when("I register on BudgetBlocks API", async () => {
@@ -54,7 +59,6 @@ defineFeature(feature, (test) => {
     and(/^My password is (.*)$/, (arg0) => {
       password = arg0;
     });
-
     when("I login on BudgetBlocks API", async () => {
       response = await request(server)
         .post("/api/auth/login")
