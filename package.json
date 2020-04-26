@@ -32,10 +32,13 @@
       "**/*.{js,jsx}",
       "!**/node_modules/**",
       "!**/vendor/**",
-      "!**/__tests__/**",
+      "!**/specs/**",
       "!**/coverage/**",
       "!**/plaid/**",
       "!**/data/**"
+    ],
+    "testMatch": [
+      "**/*.steps.js"
     ],
     "testEnvironment": "node"
   },
@@ -44,5 +47,8 @@
     "start": "node index.js",
     "test": "jest --detectOpenHandles --forceExit || true",
     "coverage": "jest --coverage --detectOpenHandles --forceExit || true"
+  },
+  "devDependencies": {
+    "jest-cucumber": "^2.0.11"
   }
 }
