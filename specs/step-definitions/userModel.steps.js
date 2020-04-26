@@ -20,6 +20,7 @@ defineFeature(feature, (test) => {
   let LinkedAccount;
   let ManualOnly;
   let headers;
+  let allUsers;
   test("Creating a new user account to test this feature", ({
     given,
     and,
@@ -77,6 +78,67 @@ defineFeature(feature, (test) => {
 
     then("I should receive a JSON object", () => {
       expect(response.type).toMatch(/json/i);
+    });
+  });
+
+  test("Categories exist for a user", ({ given, and, when, then }) => {
+    given("I have a valid user id", () => {
+      userId !== (undefined | null);
+    });
+
+    and("I have a valid token", () => {
+      token !== (undefined | null);
+    });
+
+    when("I request the categories", async () => {
+      response = await api.get(`/categories/${userId}`);
+    });
+
+    then(/^the status should be (.*)$/, (arg0) => {
+      expect(response.status).toBe(Number(arg0));
+    });
+  });
+
+  test("List of All Users", ({ given, and, when, then }) => {
+    given("I have the authority", () => {
+      userId && token;
+    });
+
+    and("I want a list of every user", () => {
+      allUsers = () => api.get("/api/users").set(genHeaders(token));
+    });
+
+    when("I request the user list", async () => {
+      response = await allUsers();
+    });
+
+    then(/^the status will be (.*)$/, (arg0) => {
+      expect(response.status).toBe(Number(arg0));
+    });
+
+    and("the body should be defined", () => {
+      expect(response.body).toBeDefined();
+    });
+  });
+
+  test("Should get total budget", ({ given, when, then, and }) => {
+    given("I have a valid account", () => {
+      userId && token;
+    });
+
+    when("I request my total budget", async () => {
+      response = await api
+        .get(`/api/users/user/${userId}/totalBudget`)
+        .set(headers);
+    });
+
+    then(/^the status should be (.*)$/, (arg0) => {
+      expect(response.status).toBe(Number(arg0));
+    });
+
+    and("the body should be defined", () => {
+      expect(response.body.totalBudget).toBeDefined();
+      // this call returns { totalBudget: { total: ??? } }
     });
   });
   test("Cannot access this protected resource without authority", ({

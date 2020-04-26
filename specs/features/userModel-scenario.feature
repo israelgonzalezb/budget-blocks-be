@@ -18,3 +18,22 @@ Feature: User Model
     Given I have authority
     When I request the users categories
     Then I should receive a JSON object
+
+  Scenario: Categories exist for a user
+    Given I have a valid user id
+    And I have a valid token
+    When I request the categories
+    Then the status should be 200
+
+  Scenario: List of All Users
+    Given I have the authority
+    And I want a list of every user
+    When I request the user list
+    Then the status will be 200
+    And the body should be defined
+
+  Scenario: Should get total budget
+    Given I have a valid account
+    When I request my total budget
+    Then the status should be 200
+    And the body should be defined
