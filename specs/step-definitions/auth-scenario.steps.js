@@ -82,6 +82,7 @@ defineFeature(feature, (test) => {
       expect(errorMessage).toBe(arg0);
     });
   });
+
   test("Logging in without a password", ({ given, and, when, then }) => {
     given("No password was provided", () => {
       password = undefined;
