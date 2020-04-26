@@ -32,3 +32,9 @@ Scenario: Logging into a user account
   And My password is "checkoutmytest"
   When I login on BudgetBlocks API
   Then the status code should be 200
+
+Scenario: Protected route requires authorization
+  Given no authorization token exists
+  When I request this resource
+  Then the status code should be 404
+  And the error should be You must be logged in to access this information.

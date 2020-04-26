@@ -126,4 +126,28 @@ defineFeature(feature, (test) => {
       await userModel.deleteUser(newUserID); // delete the test user we created
     });
   });
+
+  test("Protected route requires authorization", ({
+    given,
+    when,
+    then,
+    and,
+  }) => {
+    given("no authorization token exists", () => {
+      //
+    });
+
+    when("I request this resource", async () => {
+      response = await request(server).get("/api/users");
+      errorMessage = response.body.error || undefined;
+    });
+
+    then(/^the status code should be (.*)$/, (arg0) => {
+      expect(response.status).toBe(Number(arg0));
+    });
+
+    and(/^the error should be (.*)$/, (arg0) => {
+      expect(errorMessage).toBe(arg0);
+    });
+  });
 });
