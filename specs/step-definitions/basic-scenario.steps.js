@@ -1,7 +1,4 @@
-const { loadFeature, defineFeature } = require("jest-cucumber");
-const request = require("supertest");
-const server = require("../../data/server");
-
+const { loadFeature, defineFeature, request, server } = require("./common");
 const feature = loadFeature("./specs/features/basic-scenario.feature");
 
 defineFeature(feature, (test) => {
