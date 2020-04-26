@@ -4,32 +4,33 @@ const Users = require("../users/users-model");
 const db = require("../data/db-config");
 
 describe("Users Login & Register", () => {
+  let newUserID;
 
-  let newUserID
-
-  beforeAll(async () => {
-
-  });
+  beforeAll(async () => {});
 
   afterAll(async () => {
-    await Users.deleteUser(newUserID)
+    await Users.deleteUser(newUserID);
   });
 
   describe("Logs user in", () => {
     beforeAll(async () => {
-      await db("users")
+      await db("users");
     });
 
     test("Should allow a new user to be created", async () => {
       // Registers a new user;
 
-      const user = { email: "test@test.com", password: "password", first_name: "greg", last_name: "lala" };
+      const user = {
+        email: "test@test.com",
+        password: "password",
+        first_name: "greg",
+        last_name: "lala",
+      };
       const response = await request(server)
         .post("/api/auth/register")
         .send(user);
 
-      console.log('userCreate', response.body, response.status)
-
+      console.log("userCreate", response.body, response.status);
 
       expect(response.status).toBe(201);
     });
@@ -39,16 +40,14 @@ describe("Users Login & Register", () => {
     const user = { email: "test@test.com", password: "password" };
 
     // await Users.login(user);
-    const response = await request(server)
-      .post("/api/auth/login")
-      .send(user);
+    const response = await request(server).post("/api/auth/login").send(user);
 
-    console.log('allowLogin', response.body, response.status);
+    console.log("allowLogin", response.body, response.status);
 
     expect(response.status).toBe(200);
     expect(response.body).toBeDefined();
 
-    newUserID = response.body.id
+    newUserID = response.body.id;
   });
 
   test("Should return an error if no body is passed in", async () => {
@@ -71,9 +70,7 @@ describe("Users Login & Register", () => {
     const user = { password: "password" };
 
     // await Users.login(user);
-    const response = await request(server)
-      .post("/api/auth/login")
-      .send(user);
+    const response = await request(server).post("/api/auth/login").send(user);
     // console.log(response);
 
     expect(response.status).toBe(400);
@@ -85,9 +82,7 @@ describe("Users Login & Register", () => {
     const user = { email: "test@test.com" };
 
     // await Users.login(user);
-    const response = await request(server)
-      .post("/api/auth/login")
-      .send(user);
+    const response = await request(server).post("/api/auth/login").send(user);
     // console.log(response);
 
     expect(response.status).toBe(400);
@@ -108,5 +103,4 @@ describe("Users Login & Register", () => {
 
     expect(response).toBeDefined();
   });
-
 });
