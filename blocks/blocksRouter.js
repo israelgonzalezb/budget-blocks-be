@@ -12,16 +12,25 @@ const blocks = [
 
 router.get('/blk', paramCheck.authorize, async (req, res) => {
   try{
-    const blocks = await BlckModel.get(req.userID)
+    const blocks = await BlockModel.get(req.userID)
     res.json(blocks)
   }catch(e){
+    console.log('getBLockError', e)
     res.json({error:"Internal server error"}).status(500)
   }
 })
 
-router.post('/:userID', (req, res) => {
-  blocks.push(req.body.block)
-  res.json(req.body.block)
+// Add Block to users blocks
+router.post('/blk', paramCheck.authorize, async (req, res) => {
+  try {
+    console.log('***************blkRoutePostReqBOdy***********', req.body)
+    await BlockModel.add(req.userID, req.body)
+    const newBlocks = await BlockModel.get(req.userID)
+    res.json(newBlocks)
+
+  } catch (e) {
+    console.log(e)
+  }
 })
 
 router.post('/:userID', (req, res) => {

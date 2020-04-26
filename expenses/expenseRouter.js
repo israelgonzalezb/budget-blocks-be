@@ -4,22 +4,6 @@ const router = express.Router();
 const paramCheck = require('../users/paramCheck')
 const ExpensesModel = require('./expenseModel')
 
-let expenses = [{
-  id: 1,
-  name: "jjj",
-  amount: 70
-},
-{
-  id: 2,
-  name: "vvv",
-  amount: 11
-},
-{
-  id: 3,
-  name: "sdfsdf",
-  amount: 110
-}]
-
 router.get('/exp', paramCheck.authorize, async (req, res) => {
   try {
     const expenses = await ExpensesModel.get(req.userID)
@@ -43,7 +27,6 @@ router.delete("/:id", paramCheck.userExists, (req, res) => {
   res.json(deletedExp)
 })
 
-
 router.post(
   "/exp",
   paramCheck.authorize,
@@ -58,6 +41,6 @@ router.post(
     } catch (e) {
       console.log(e)
     }
-
   })
+
 module.exports = router;
