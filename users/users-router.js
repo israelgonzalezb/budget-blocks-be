@@ -1,18 +1,16 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 const router = require("express").Router();
 const Users = require("./users-model.js");
 const restricted = require("../auth/restricted-middleware.js");
 const paramCheck = require("./paramCheck.js");
 
-
-
 router.get("/", restricted, (req, res) => {
   Users.allUsers()
-    .then(response => {
+    .then((response) => {
       res.status(200).json(response);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       res.status(400).json({ error: "Unable to retrieve a list of users" });
     });
@@ -37,6 +35,25 @@ router.get(
   }
 );
 
+router.get(
+  "/user/:userId/totalBudget",
+  paramCheck.userExists,
+  paramCheck.onlyId,
+  paramCheck.tokenMatchesUserId,
+  async (req, res) => {
+    const id = req.params.userId;
+    try {
+      const totalBudget = await Users.get_total_budget(id);
+      res.status(200).json({ totalBudget });
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .json({ message: "cannot get total budget for this user" });
+    }
+  }
+);
+
 // Returns all of the categories for the userID that is passed. If no results are returned, that means the userID does not exist
 router.get(
   `/categories/:userId`,
@@ -47,7 +64,7 @@ router.get(
     const id = req.params.userId;
 
     Users.returnUserCategories(id)
-      .then(categories => {
+      .then((categories) => {
         if (categories.length > 0) {
           res.status(200).json(categories);
         } else {
@@ -56,10 +73,10 @@ router.get(
             .json({ message: "The specified user ID does not exist." });
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         res.status(500).json({
-          message: "Unable to return categories for the specified user."
+          message: "Unable to return categories for the specified user.",
         });
       });
   }
@@ -85,14 +102,14 @@ router.put(
           userid: id,
           categoryid: body.categoryid,
           amount: body.budget,
-          status: "true"
+          status: "true",
         });
       } else {
         res.status(400).json({
           userid: id,
           categoryid: body.categoryid,
           amount: body.budget,
-          status: "false"
+          status: "false",
         });
       }
     } catch (err) {
@@ -138,35 +155,45 @@ router.put(
   }
 );
 
-router.delete("/user/:userId", paramCheck.userExists, paramCheck.onlyId, paramCheck.tokenMatchesUserId, async(req,res)=>{
-  const id = req.params.userId
+router.delete(
+  "/user/:userId",
+  paramCheck.userExists,
+  paramCheck.onlyId,
+  paramCheck.tokenMatchesUserId,
+  async (req, res) => {
+    const id = req.params.userId;
 
-  try{
-    const deleted = await Users.deleteUser(id)
-    res.status(201).json({deleted})
-  }catch(err){
-    console.log(err)
-    res.status(500).json({err})
-  }
-
-
-})
-
-router.patch('/user/profile/:userId', paramCheck.userExists, paramCheck.onlyId, paramCheck.tokenMatchesUserId, async(req,res)=>{
-  const id = req.params.userId
-  const body = req.body
-
-  try{
-    if(body.password){
-      const hashedPassword = await bcrypt.hash(body.password, 12)
-      body.password = hashedPassword
+    try {
+      const deleted = await Users.deleteUser(id);
+      res.status(201).json({ deleted });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ err });
     }
-    const updated = await Users.edituserProfile(id, body)
-    res.status(201).json({updated})
-  }catch(err){
-    console.log(err)
-    res.status(500).json({message:'error on server'})
   }
-})
+);
+
+router.patch(
+  "/user/profile/:userId",
+  paramCheck.userExists,
+  paramCheck.onlyId,
+  paramCheck.tokenMatchesUserId,
+  async (req, res) => {
+    const id = req.params.userId;
+    const body = req.body;
+
+    try {
+      if (body.password) {
+        const hashedPassword = await bcrypt.hash(body.password, 12);
+        body.password = hashedPassword;
+      }
+      const updated = await Users.edituserProfile(id, body);
+      res.status(201).json({ updated });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "error on server" });
+    }
+  }
+);
 
 module.exports = router;
