@@ -7,8 +7,13 @@ const {
 } = require("./common");
 const feature = loadFeature("./specs/features/auth-scenario.feature");
 
+const api = request(server);
+
+const registerAccount = (body) => api.post("/api/auth/register").send(body);
+
+const loginAccount = (body) => api.post("/api/auth/login").send(body);
+
 defineFeature(feature, (test) => {
-  const api = request(server);
   let email;
   let password;
   let response;
@@ -32,9 +37,150 @@ defineFeature(feature, (test) => {
     });
 
     when("I register on BudgetBlocks API", async () => {
-      response = await api
-        .post("/api/auth/register")
-        .send({ email, password, first_name, last_name });
+      response = await registerAccount({
+        email,
+        password,
+        first_name,
+        last_name,
+      });
+    });
+
+    then(/^the status code should be (.*)$/, (arg0) => {
+      expect(response.status).toBe(Number(arg0));
+    });
+  });
+
+  test("Cannot register with duplicate email", ({ given, and, when, then }) => {
+    given(/^My email is (.*)$/, (arg0) => {
+      email = arg0;
+    });
+
+    and(/^My password is (.*)$/, (arg0) => {
+      password = arg0;
+    });
+
+    and(/^My firstname is (.*)$/, (arg0) => {
+      first_name = arg0;
+    });
+
+    and(/^My lastname is (.*)$/, (arg0) => {
+      last_name = arg0;
+    });
+
+    when("I register on BudgetBlocks API", async () => {
+      response = await registerAccount({
+        email,
+        password,
+        first_name,
+        last_name,
+      });
+    });
+
+    then(/^the status code should be (.*)$/, (arg0) => {
+      expect(response.status).toBe(Number(arg0));
+    });
+  });
+
+  test("Cannot register with empty email", ({ given, and, when, then }) => {
+    given("My email is undefined", () => {
+      email = undefined;
+    });
+    and(/^My password is (.*)$/, (arg0) => {
+      password = arg0;
+    });
+
+    and(/^My firstname is (.*)$/, (arg0) => {
+      first_name = arg0;
+    });
+
+    and(/^My lastname is (.*)$/, (arg0) => {
+      last_name = arg0;
+    });
+
+    when("I register on BudgetBlocks API", async () => {
+      response = await registerAccount({
+        password,
+        first_name,
+        last_name,
+      });
+    });
+
+    then(/^the status code should be (.*)$/, (arg0) => {
+      expect(response.status).toBe(Number(arg0));
+    });
+  });
+
+  test("Cannot register with empty password", ({ given, and, when, then }) => {
+    given(/^My email is (.*)$/, (arg0) => {
+      email = arg0;
+    });
+
+    and("My password is undefined", () => {
+      password = undefined;
+    });
+
+    and(/^My firstname is (.*)$/, (arg0) => {
+      first_name = arg0;
+    });
+
+    and(/^My lastname is (.*)$/, (arg0) => {
+      last_name = arg0;
+    });
+
+    when("I register on BudgetBlocks API", async () => {
+      response = await registerAccount({
+        email,
+        first_name,
+        last_name,
+      });
+    });
+
+    then(/^the status code should be (.*)$/, (arg0) => {
+      expect(response.status).toBe(Number(arg0));
+    });
+  });
+
+  test("Cannot register without body", ({ given, when, then }) => {
+    given("I have no body to send", () => {
+      email = undefined;
+      password = undefined;
+      first_name = undefined;
+      last_name = undefined;
+    });
+
+    when("I register on BudgetBlocks API", async () => {
+      response = await registerAccount();
+    });
+
+    then(/^the status code should be (.*)$/, (arg0) => {
+      expect(response.status).toBe(Number(arg0));
+    });
+  });
+
+  test("Cannot register with bad password", ({ given, and, when, then }) => {
+    given(/^My email is (.*)$/, (arg0) => {
+      email = arg0;
+    });
+
+    and(/^My password is (.*)$/, (arg0) => {
+      password = null; // can we find a string that breaks it?
+    });
+
+    and(/^My firstname is (.*)$/, (arg0) => {
+      first_name = arg0;
+    });
+
+    and(/^My lastname is (.*)$/, (arg0) => {
+      last_name = arg0;
+    });
+
+    when("I register on BudgetBlocks API", async () => {
+      response = await registerAccount({
+        email,
+        password,
+        first_name,
+        last_name,
+      });
     });
 
     then(/^the status code should be (.*)$/, (arg0) => {
@@ -49,7 +195,7 @@ defineFeature(feature, (test) => {
     });
 
     when("I login on BudgetBlocks API", async () => {
-      response = await api.post("/api/auth/login");
+      response = await loginAccount();
       errorMessage = response.body.error || undefined;
     });
 
@@ -68,9 +214,7 @@ defineFeature(feature, (test) => {
     });
 
     when("I login on BudgetBlocks API", async () => {
-      response = await request(server)
-        .post("/api/auth/login")
-        .send({ password });
+      response = await loginAccount({ password });
       errorMessage = response.body.error || undefined;
     });
 
@@ -93,7 +237,7 @@ defineFeature(feature, (test) => {
     });
 
     when("I login on BudgetBlocks API", async () => {
-      response = await request(server).post("/api/auth/login").send({ email });
+      response = await loginAccount({ email });
       errorMessage = response.body.error || undefined;
     });
 
@@ -115,9 +259,7 @@ defineFeature(feature, (test) => {
       password = arg0;
     });
     when("I login on BudgetBlocks API", async () => {
-      response = await request(server)
-        .post("/api/auth/login")
-        .send({ email, password });
+      response = await loginAccount({ email, password });
     });
 
     then(/^the status code should be (.*)$/, async (arg0) => {
@@ -139,7 +281,7 @@ defineFeature(feature, (test) => {
     });
 
     when("I request this resource", async () => {
-      response = await request(server).get("/api/users");
+      response = await api.get("/api/users");
       errorMessage = response.body.error || undefined;
     });
 
