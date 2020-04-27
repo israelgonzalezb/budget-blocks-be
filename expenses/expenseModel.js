@@ -29,10 +29,15 @@ const add = async (userID, expense) => {
   await db('expense').insert(expense)
 }
 
-const del = async (expenseID) => {
-  const deletedExp = await db('expense').delet().where({ id: expenseID })
+const del = async (id) => {
+  console.log('**********deletedExpModel********', id)
+
+  const deletedExp = await db('expense')
+    .delete()
+    .where({ id })
+    // .returning('*')
   console.log('**********deletedExpModel********', deletedExp)
-  return deletedExpense
+  return deletedExp
 }
 
 const assignBlock = async (expenseID, blockID) => {
@@ -46,13 +51,23 @@ const assignBlock = async (expenseID, blockID) => {
 
 const unassignExpense = async (id) => {
   const [newExpense] = await db('expense')
-    .update({block_id: null})
+    .update({ block_id: null })
     .where({ id })
     .returning('*')
-    console.log('expenseUnAssignBLockNewExpense', newExpense)
-return newExpense
+  console.log('expenseUnAssignBLockNewExpense', newExpense)
+  return newExpense
 }
+
+const update = async (id, { name, amount }) => {
+  const [newExpense] = await db('expense')
+    .update({ name, amount })
+    .where({ id })
+    .returning('*')
+  return newExpense
+}
+
 module.exports = {
+  update,
   get,
   add,
   del,

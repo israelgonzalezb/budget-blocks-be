@@ -24,16 +24,17 @@ router.get('/:id/byBlock', paramCheck.authorize, async (req, res) => {
   }
 })
 
-router.delete("/:id", paramCheck.userExists, async (req, res) => {
+router.delete("/:id", paramCheck.authorize, async (req, res) => {
   console.log('delete req.params', req.params)
+  try {
+    await ExpensesModel.del(req.params.id)
 
-  const deletedExp = await ExpensesModel.del(req.params.id)
+    const newExpenses = await ExpensesModel.getUnassigned(req.userID)
+    res.json(newExpenses)
 
-  // newExpenses = expenses.filter(exp => exp.id != req.params.id)
-  // console.log(`before: ${JSON.stringify(expenses)}, after: ${JSON.stringify(newExpenses)}`)
-  // expenses = newExpenses
-
-  res.json(deletedExp)
+  } catch (e) {
+    console.log(e)
+  }
 })
 
 router.put('/:id/assignBlock', paramCheck.authorize, async (req, res) => {
@@ -47,7 +48,7 @@ router.put('/:id/assignBlock', paramCheck.authorize, async (req, res) => {
   }
 })
 
-router.put("/:id/unassign", paramCheck.authorize, async(req, res) => {
+router.put("/:id/unassign", paramCheck.authorize, async (req, res) => {
   console.log('unassignBlock', req.params.id)
   try {
     await ExpensesModel.unassignExpense(req.params.id)
@@ -74,4 +75,13 @@ router.post(
     }
   })
 
+router.put('/:id', paramCheck.authorize, async (req, res) => {
+  try {
+    await ExpensesModel.update(req.params.id, req.body)
+    const newExpenses = await ExpensesModel.getUnassigned(req.userID)
+    res.json(newExpenses)
+  } catch (error) {
+    console.log(error)
+  }
+})
 module.exports = router;
