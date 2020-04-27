@@ -21,7 +21,8 @@ router.get(
     try {
       const categories = await User.returnUserCategories(userid);
       if (categories.length == 0) {
-        //same thing as the plaid router. Just need to loop though a default categories and link them to the user thats opted for manual entry.
+        // same thing as the plaid router. Just need to loop though a default categories and 
+        // link them to the user thats opted for manual entry.
         const doneData = Promise.all(
           data.map(async d => {
             try {
@@ -113,6 +114,8 @@ router.get(
     }
   }
 );
+
+
 
 router.post(
   "/categories/:userId",paramCheck.idAndBody,paramCheck.userExists,paramCheck.tokenMatchesUserId, paramCheck.CatAlreadyLinked, async (req, res) => {

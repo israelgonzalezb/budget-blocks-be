@@ -16,10 +16,11 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CodeClimateReporterId }}
           CI: true
-          PLAID_CLIENT_ID: ${{secrets.plaidClientId }}
-          PLAID_SECRET: ${{secrets.secret}}
-          PLAID_PUBLIC_KEY: ${{secrets.publicKey}}
-          # PLAID_ENV: ${{secrets.plaidEnvironment }}
+          PLAID_CLIENT_ID: ${{secrets.PLAID_CLIENT_ID }}
+          PLAID_SECRET: ${{secrets.PLAID_SECRET}}
+          PLAID_PUBLIC_KEY: ${{secrets.PLAID_PUBLIC_KEY}}
+          NODE_ENV: "test"
+          TEST_DATABASE_URL: ${{secrets.TEST_DATABASE_URL}}
         with:
           coverageCommand: npm run coverage
           debug: true

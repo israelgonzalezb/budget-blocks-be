@@ -37,7 +37,7 @@ exports.tokenMatchesUserId = (req, res, next) => {
   const secret = process.env.JWT_SECRET || "secretkey";
 
   // Verifies the token and then allows the endpoint to be accessed
-  jwt.verify(authorization, secret, function(error, validToken) {
+  jwt.verify(authorization, secret, function (error, validToken) {
     if (error) {
       res.status(400).json({ error: "Not able to validate the user." });
     } else {
@@ -47,6 +47,32 @@ exports.tokenMatchesUserId = (req, res, next) => {
         res.status(403).json({
           error:
             "The user id you are trying to pass does not match with the web token."
+        });
+      }
+    }
+  });
+};
+
+exports.authorize = (req, res, next) => {
+  const { authorization } = req.headers;
+  const secret = process.env.JWT_SECRET || "secretkey";
+
+  console.log('************authorize authrization*********8', authorization)
+  // Verifies the token and then allows the endpoint to be accessed
+  jwt.verify(authorization, secret, function (error, validToken) {
+    if (error) {
+      res.status(401).json({
+        error: "Not authorized."
+      });
+    } else {
+      if (validToken.user_id) {
+        req.userID = validToken.user_id
+        console.log('**************authMW************', validToken.user_id)
+        next();
+      } else {
+        res.status(401).json({
+          error:
+            "Not authorized."
         });
       }
     }
@@ -76,29 +102,31 @@ exports.userExists = (req, res, next) => {
     });
 };
 
-exports.CatAlreadyLinked = async (req,res,next)=>{
+exports.CatAlreadyLinked = async (req, res, next) => {
   let id = req.params.userId;
   let body = req.body;
 
-  try{
+  try {
     const yeet = await Manual.category_already_linked(body, id)
-    if(yeet){
-      res.status(400).json({message:'You are already linked to this category'})
-    }else{
+    if (yeet) {
+      res.status(400).json({ message: 'You are already linked to this category' })
+    } else {
       next()
     }
-  }catch(err){
+  } catch (err) {
 
   }
 }
 
-exports.defaultCategory = (req,res,next)=>{
+exports.defaultCategory = (req, res, next) => {
   let catId = req.params.catId;
 
-  if(catId > 24){
+  if (catId > 24) {
     next()
-  }else{
-    res.status(400).json({message:'You just tried to delete/update a default category'})
+  } else {
+    res.status(400).json({ message: 'You just tried to delete/update a default category' })
   }
 
 }
+
+
