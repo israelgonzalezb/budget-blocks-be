@@ -14,9 +14,12 @@ const add = async (userID, block) => {
 }
 
 const del = async (blockID) => {
-  const deletedBlock = await db('block').delet().where({id:blockID})
+  const [deletedBlock] = await db('block')
+  .delete()
+  .where({id:blockID})
+  .returning('id')
   console.log('**********deletedBlockModel********', deletedBlock)
-  return deletedblock
+  return deletedBlock
 }
 
 module.exports = {
