@@ -21,7 +21,7 @@ exclude_patterns:
   - "**/*.spec.tsx"
   - "**/vendor/"
   - "**/node_modules/"
-    - "**/__tests__/"
+  - "**/__tests__/"
   - "*/webhook/*"
   - "/plaid/"
   - "/coverage"
