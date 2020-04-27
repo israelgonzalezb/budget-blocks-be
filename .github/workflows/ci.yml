@@ -19,7 +19,7 @@ jobs:
           PLAID_CLIENT_ID: ${{secrets.PLAID_CLIENT_ID }}
           PLAID_SECRET: ${{secrets.PLAID_SECRET}}
           PLAID_PUBLIC_KEY: ${{secrets.PLAID_PUBLIC_KEY}}
-          NODE_ENV: ${{secrets.NODE_ENV }}
+          NODE_ENV: "test"
         with:
           coverageCommand: npm run coverage
           debug: true
