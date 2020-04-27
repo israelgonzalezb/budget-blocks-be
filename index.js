@@ -1,3 +1,4 @@
+require("dotenv").config(); // read .env if it exists
 const server = require("./data/server.js");
 const PORT = process.env.PORT || 5000;
 
