@@ -19,7 +19,7 @@ const client = new plaid.Client(
 //This is comming from PLAID, res.send or any variation will just be sending to plaid
 router.post("/", webhookMiddle, async (req, res) => {
   const body = req.body;
-
+  Plaid.link_user_categoriePlaid.link_user_categorie
   //changed this to initial update becuase honestly we just need the last 30 days, not their life story
   if (body.webhook_code === "INITIAL_UPDATE") {
     console.log("INITIAL PULL", body);
