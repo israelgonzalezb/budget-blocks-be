@@ -22,8 +22,17 @@ const del = async (blockID) => {
   return deletedBlock
 }
 
+const update = async (id, {limit, name}) => {
+  const [changedBlock] = await db('block')
+    .update({limit, name})
+    .where({id})
+    .returning('*')
+  return changedBlock
+}
+
 module.exports = {
   get,
   add,
-  del
+  del,
+  update
 }

@@ -79,4 +79,15 @@ router.delete('/:id', paramCheck.authorize, async (req, res ) => {
   }
 })
 
+router.put('/:id', paramCheck.authorize, async(req, res) => {
+  console.log('update block', req.body)
+  try {
+    await BlockModel.update(req.params.id, req.body)
+    const newBlocks = await BlockModel.get(req.userID)
+    res.json(newBlocks)
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 module.exports = router
