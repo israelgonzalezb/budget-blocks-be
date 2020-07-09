@@ -53,24 +53,40 @@ router.post(
 
     // hashes the password prior to sending it over to the client
     bcrypt.hash(user.password, 12, (err, hash) => {
-      if (err) {
-        res
-          .status(500)
-          .json({
-            message:
-              "something went wrong, we cant process the password right now"
-          });
-      } else {
-        user.password = hash;
+      // if (err) {
+      //   res
+      //     .status(500)
+      //     .json({
+      //       message:
+      //         "something went wrong, we cant process the password right now"
+      //     });
+      // } else {
+        // user.password = hash;
 
-        Users.addUser(user)
+        // Users.addUser(user)
+        //   .then(id => {
+        //     res.status(201).json({ message: "success", id });
+        //   })
+        //   .catch(err => {
+        //     res.status(500).json({ message: "unable to create new user" });
+        //   });
+      // }
+    }).then(res => {
+      user.password = hash;
+      Users.addUser(user)
           .then(id => {
             res.status(201).json({ message: "success", id });
           })
           .catch(err => {
             res.status(500).json({ message: "unable to create new user" });
           });
-      }
+    }).catch(err => {
+      res
+          .status(500)
+          .json({
+            message:
+              "something went wrong, we cant process the password right now"
+          });
     });
   }
 );
