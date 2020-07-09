@@ -65,6 +65,7 @@ router.post(
             res.status(201).json({ message: "success", id });
           })
           .catch((err) => {
+            console.log("!!!!", res)
             res.status(500).json({ message: "unable to create new user" });
           });
       }
