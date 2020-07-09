@@ -25,7 +25,7 @@ function userAlreadyExists(req, res, next) {
   let email = req.body.email;
   // Searches the database for the username that was passed in
   Users.findUserBy({ email })
-    .then(response => {
+    .then((response) => {
       // If we get a response, we know that a user with that unique username already exists so return an error.
       // If no user is found, allow the endpoint to be accessed
       if (response) {
@@ -36,12 +36,10 @@ function userAlreadyExists(req, res, next) {
         next();
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
-      res
-        .status(500)
-        .json({ error: error });
-      next()
+      res.status(500).json({ error: error });
+      next();
     });
 }
 
@@ -53,40 +51,23 @@ router.post(
 
     // hashes the password prior to sending it over to the client
     bcrypt.hash(user.password, 12, (err, hash) => {
-      // if (err) {
-      //   res
-      //     .status(500)
-      //     .json({
-      //       message:
-      //         "something went wrong, we cant process the password right now"
-      //     });
-      // } else {
-        // user.password = hash;
+      console.log(err, hash);
+      if (err) {
+        res.status(500).json({
+          message:
+            "something went wrong, we cant process the password right now",
+        });
+      } else {
+        user.password = hash;
 
-        // Users.addUser(user)
-        //   .then(id => {
-        //     res.status(201).json({ message: "success", id });
-        //   })
-        //   .catch(err => {
-        //     res.status(500).json({ message: "unable to create new user" });
-        //   });
-      // }
-    }).then(res => {
-      user.password = hash;
-      Users.addUser(user)
-          .then(id => {
+        Users.addUser(user)
+          .then((id) => {
             res.status(201).json({ message: "success", id });
           })
-          .catch(err => {
+          .catch((err) => {
             res.status(500).json({ message: "unable to create new user" });
           });
-    }).catch(err => {
-      res
-          .status(500)
-          .json({
-            message:
-              "something went wrong, we cant process the password right now"
-          });
+      }
     });
   }
 );
@@ -107,7 +88,7 @@ router.post("/login", validateUserCredentials, async (req, res) => {
         token,
         message: `Welcome ${user.email}!`,
         LinkedAccount: user.LinkedAccount,
-        ManualOnly: user.ManualOnly
+        ManualOnly: user.ManualOnly,
       });
     }
   } catch (err) {
@@ -119,13 +100,13 @@ router.post("/login", validateUserCredentials, async (req, res) => {
 function signToken(user) {
   const payload = {
     user_id: user.id,
-    email: user.email
+    email: user.email,
   };
 
   const secret = process.env.JWT_SECRET || "secretkey";
 
   const options = {
-    expiresIn: "4h"
+    expiresIn: "4h",
   };
 
   // returns the token so that it can be sent back to the client
